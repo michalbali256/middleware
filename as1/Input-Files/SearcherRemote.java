@@ -17,13 +17,13 @@ public class SearcherRemote
     SearcherImpl impl = new SearcherImpl();
     
     @Override
-    public int getDistance(Node from, Node to)
+    public int getDistance(Node from, Node to) throws RemoteException
     {
         return impl.getDistance(from, to);
     }
 	
     @Override
-    public int getDistanceTransitive(int neighborDistance, Node from, Node to)
+    public int getDistanceTransitive(int neighborDistance, Node from, Node to) throws RemoteException
     {
         return impl.getDistanceTransitive(neighborDistance, from, to);
     }

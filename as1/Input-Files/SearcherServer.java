@@ -14,7 +14,11 @@ public class SearcherServer
 			// The host name must be changed if the server uses
 			// another computer than the client!
 			Naming.rebind ("//localhost/Searcher", obj);
-            
+			
+			NodeRemoteProvider provider = new NodeRemoteProviderImpl();
+
+			Naming.rebind ("//localhost/NodeRemoteProvider", provider);
+
             System.out.println ("Binded");
 			// The virtual machine will not exit here because the export of
 			// the remotely accessible object creates a new thread that

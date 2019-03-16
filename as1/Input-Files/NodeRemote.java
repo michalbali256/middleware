@@ -1,9 +1,11 @@
 import java.io.Serializable;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
 import java.util.Set;
 
-public interface Node extends Serializable {
+public interface NodeRemote extends Node, Remote  {
 	/** Gets the set of nodes connected to this node by an edge. */
 	Set<Node> getNeighbors() throws RemoteException;
 	/** Gets the set of nodes connected to this node by a path up to the specified distance. */
@@ -11,3 +13,4 @@ public interface Node extends Serializable {
 	/** Connects this node to another by an edge. */
 	void addNeighbor(Node neighbor) throws RemoteException;
 }
+
