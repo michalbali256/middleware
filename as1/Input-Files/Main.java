@@ -127,8 +127,10 @@ public class Main {
 		searchBenchmark(SEARCHES);
 		
 
-		System.out.print("    Remote searcher, remote nodes ");
 		
+
+		System.out.print("    Remote searcher, remote nodes ");
+		Thread.sleep(2000);
 		random.setSeed(seed);
 		createNodesFromServer(provider, GRAPH_NODES);
 		connectSomeNodes(GRAPH_EDGES);
@@ -162,12 +164,13 @@ public class Main {
 			searcherRemote = (Searcher) Naming.lookup("//u-pl30/Searcher");
 			provider = (NodeRemoteProvider) Naming.lookup ("//u-pl30/NodeRemoteProvider");
 
+			
 			for(Tdist = 2; Tdist < 10; Tdist+=2)
 			{
 				System.out.printf("Transitive distance: %d\n", Tdist);
 
 				System.out.println("  Dense graph");
-				GRAPH_EDGES = 500000;
+				GRAPH_EDGES = 50000;
 				runBench();
 
 				System.out.println("  Sparse graph");
