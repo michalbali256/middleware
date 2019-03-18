@@ -96,7 +96,7 @@ public class Main {
 
 			// Calculate transitive distance, measure operation time
 			final long startTimeTransitiveNs = System.nanoTime();
-			final int distanceTransitive = searcher.getDistanceTransitive(4, nodes[idxFrom], nodes[idxTo]);
+			final int distanceTransitive = searcher.getDistanceTransitive(2, nodes[idxFrom], nodes[idxTo]);
 			final long durationTransitiveNs = System.nanoTime() - startTimeTransitiveNs;
 			sumT += durationTransitiveNs;
 			if (distance != distanceTransitive) {
@@ -107,7 +107,7 @@ public class Main {
 				//System.out.printf("%7d %8d %13d %13d%n", i, distance, durationNs / 1000, durationTransitiveNs / 1000);
 			}
 		}
-		System.out.printf("%13d %13d", sum, sumT);
+		System.out.printf("%13d %13d\n", sum, sumT);
 
 	}
 
@@ -125,7 +125,8 @@ public class Main {
 			System.out.println ("GOT HERE");
 			// Create a randomly connected graph and do a quick measurement.
 			// Consider replacing connectSomeNodes with connectAllNodes to verify that all distances are equal to one.
-			searcher = (Searcher) Naming.lookup ("//localhost/Searcher");
+			searcher = (Searcher) Naming.lookup("//u-pl30/Searcher");
+			System.out.println ("GOT HERE");
 			//remote searcher, local nodes serialized
 			System.out.println("------------ Remote searcher, local nodes -------------");
 			random.setSeed(seed);
@@ -135,7 +136,8 @@ public class Main {
 			
 			System.out.println("------------ Remote searcher, remote nodes -------------");
 
-			NodeRemoteProvider provider = (NodeRemoteProvider) Naming.lookup ("//localhost/NodeRemoteProvider");
+			NodeRemoteProvider provider = (NodeRemoteProvider) 
+Naming.lookup ("//u-pl30/NodeRemoteProvider");
 			random.setSeed(seed);
 			createNodesFromServer(provider, GRAPH_NODES);
 			connectSomeNodes(GRAPH_EDGES);

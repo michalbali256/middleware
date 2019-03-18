@@ -15,6 +15,11 @@ public class SearcherServer
 			// another computer than the client!
 			Naming.rebind ("//localhost/Searcher", obj);
 			
+			System.out.println ("Binded");
+			// The virtual machine will not exit here because the export of
+			// the remotely accessible object creates a new thread that
+			// keeps the application active.
+
 			NodeRemoteProvider provider = new NodeRemoteProviderImpl();
 
 			Naming.rebind ("//localhost/NodeRemoteProvider", provider);
