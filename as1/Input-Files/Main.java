@@ -120,7 +120,7 @@ public class Main {
 		searcher = searcherRemote;
 
 		//remote searcher, local nodes serialized
-		System.out.print("    Remote searcher, local nodes   ");
+		System.out.print("    Remote searcher, local nodes  ");
 		random.setSeed(seed);
 		createNodesLocal(GRAPH_NODES);
 		connectSomeNodes(GRAPH_EDGES);
@@ -135,7 +135,7 @@ public class Main {
 		searchBenchmark(SEARCHES);
 
 
-		System.out.print("    Local searcher, remote nodes ");
+		System.out.print("    Local searcher, remote nodes  ");
 
 		searcher = new SearcherImpl();
 		random.setSeed(seed);
@@ -161,16 +161,19 @@ public class Main {
 		{
 			searcherRemote = (Searcher) Naming.lookup("//u-pl30/Searcher");
 			provider = (NodeRemoteProvider) Naming.lookup ("//u-pl30/NodeRemoteProvider");
-			
+
 			for(Tdist = 2; Tdist < 10; Tdist+=2)
 			{
-				System.out.printf("Transitive distance: %d", Tdist);
-				System.out.println("  Sparse graph");
-				GRAPH_EDGES = 2000;
-				runBench();
+				System.out.printf("Transitive distance: %d\n", Tdist);
+
 				System.out.println("  Dense graph");
 				GRAPH_EDGES = 500000;
 				runBench();
+
+				System.out.println("  Sparse graph");
+				GRAPH_EDGES = 2000;
+				runBench();
+				
 			}
 		}
 		catch (Exception e)
