@@ -113,10 +113,11 @@ public class Main {
 
 	}
 	static long seed;
-	
+	static Searcher searcherRemote;
+	static NodeRemoteProvider provider;
 	static void runBench() throws Exception
 	{
-		searcher = (Searcher) Naming.lookup("//u-pl30/Searcher");
+		searcher = searcherRemote;
 
 		//remote searcher, local nodes serialized
 		System.out.print("    Remote searcher, local nodes   ");
@@ -127,7 +128,7 @@ public class Main {
 		
 
 		System.out.print("    Remote searcher, remote nodes ");
-		NodeRemoteProvider provider = (NodeRemoteProvider) Naming.lookup ("//u-pl30/NodeRemoteProvider");
+		
 		random.setSeed(seed);
 		createNodesFromServer(provider, GRAPH_NODES);
 		connectSomeNodes(GRAPH_EDGES);
@@ -158,7 +159,8 @@ public class Main {
 		
 		try
 		{
-			
+			searcherRemote = (Searcher) Naming.lookup("//u-pl30/Searcher");
+			provider = (NodeRemoteProvider) Naming.lookup ("//u-pl30/NodeRemoteProvider");
 			
 			for(Tdist = 2; Tdist < 10; Tdist+=2)
 			{
