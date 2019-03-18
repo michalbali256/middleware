@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 public class Main {
 	// How many nodes and how many edges to create.
 	private static final int GRAPH_NODES = 1000;
-	private static final int GRAPH_EDGES = 2000;
+	private static int GRAPH_EDGES = 2000;
 
 	// How many searches to perform
 	private static final int SEARCHES = 50;
@@ -73,6 +73,8 @@ public class Main {
 		}
 	}
 
+	static int Tdist = 4;
+
 	/**
 	 * Runs a quick measurement on the graph.
 	 * 
@@ -96,7 +98,7 @@ public class Main {
 
 			// Calculate transitive distance, measure operation time
 			final long startTimeTransitiveNs = System.nanoTime();
-			final int distanceTransitive = searcher.getDistanceTransitive(2, nodes[idxFrom], nodes[idxTo]);
+			final int distanceTransitive = searcher.getDistanceTransitive(Tdist, nodes[idxFrom], nodes[idxTo]);
 			final long durationTransitiveNs = System.nanoTime() - startTimeTransitiveNs;
 			sumT += durationTransitiveNs;
 			if (distance != distanceTransitive) {
@@ -110,58 +112,64 @@ public class Main {
 		System.out.printf("%13d %13d\n", sum, sumT);
 
 	}
+	static long seed;
+	
+	static void runBench() throws Exception
+	{
+		searcher = (Searcher) Naming.lookup("//u-pl30/Searcher");
+
+		//remote searcher, local nodes serialized
+		System.out.print("    Remote searcher, local nodes   ");
+		random.setSeed(seed);
+		createNodesLocal(GRAPH_NODES);
+		connectSomeNodes(GRAPH_EDGES);
+		searchBenchmark(SEARCHES);
+		
+
+		System.out.print("    Remote searcher, remote nodes ");
+		NodeRemoteProvider provider = (NodeRemoteProvider) Naming.lookup ("//u-pl30/NodeRemoteProvider");
+		random.setSeed(seed);
+		createNodesFromServer(provider, GRAPH_NODES);
+		connectSomeNodes(GRAPH_EDGES);
+		searchBenchmark(SEARCHES);
+
+
+		System.out.print("    Local searcher, remote nodes ");
+
+		searcher = new SearcherImpl();
+		random.setSeed(seed);
+		createNodesFromServer(provider, GRAPH_NODES);
+		connectSomeNodes(GRAPH_EDGES);
+		searchBenchmark(SEARCHES);
+
+		System.out.print("    Local searcher, local nodes    ");
+		//local searcher, local nodes serialized
+		
+	
+		random.setSeed(seed);
+		createNodesLocal(GRAPH_NODES);
+		connectSomeNodes(GRAPH_EDGES);
+		searchBenchmark(SEARCHES);
+	}
 
 	public static void main(String[] args) {
 		
-		long seed = random.nextLong();
+		seed = random.nextLong();
 		
 		try
 		{
-			// Use the registry on this host to find the server.
-			// The host name must be changed if the server uses
-			// another computer than the client!
 			
 			
-			System.out.println ("GOT HERE");
-			// Create a randomly connected graph and do a quick measurement.
-			// Consider replacing connectSomeNodes with connectAllNodes to verify that all distances are equal to one.
-			searcher = (Searcher) Naming.lookup("//u-pl30/Searcher");
-			System.out.println ("GOT HERE");
-			//remote searcher, local nodes serialized
-			System.out.println("------------ Remote searcher, local nodes -------------");
-			random.setSeed(seed);
-			createNodesLocal(GRAPH_NODES);
-			connectSomeNodes(GRAPH_EDGES);
-			searchBenchmark(SEARCHES);
-			
-			System.out.println("------------ Remote searcher, remote nodes -------------");
-
-			NodeRemoteProvider provider = (NodeRemoteProvider) 
-Naming.lookup ("//u-pl30/NodeRemoteProvider");
-			random.setSeed(seed);
-			createNodesFromServer(provider, GRAPH_NODES);
-			connectSomeNodes(GRAPH_EDGES);
-			searchBenchmark(SEARCHES);
-
-
-			System.out.println("------------ Local searcher, remote nodes -------------");
-
-			searcher = new SearcherImpl();
-			random.setSeed(seed);
-			createNodesFromServer(provider, GRAPH_NODES);
-			connectSomeNodes(GRAPH_EDGES);
-			searchBenchmark(SEARCHES);
-
-			System.out.println("------------ Local searcher, local nodes -------------");
-			//local searcher, local nodes serialized
-			
-		
-			random.setSeed(seed);
-			createNodesLocal(GRAPH_NODES);
-			connectSomeNodes(GRAPH_EDGES);
-			searchBenchmark(SEARCHES);
-
-
+			for(Tdist = 2; Tdist < 10; Tdist+=2)
+			{
+				System.out.printf("Transitive distance: %d", Tdist);
+				System.out.println("  Sparse graph");
+				GRAPH_EDGES = 2000;
+				runBench();
+				System.out.println("  Dense graph");
+				GRAPH_EDGES = 500000;
+				runBench();
+			}
 		}
 		catch (Exception e)
 		{ 
