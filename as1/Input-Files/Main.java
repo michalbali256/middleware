@@ -169,9 +169,9 @@ public class Main {
 			{
 				System.out.printf("Transitive distance: %d\n", Tdist);
 
-				System.out.println("  Dense graph");
+				/*System.out.println("  Dense graph");
 				GRAPH_EDGES = 3000;
-				runBench();
+				runBench();*/
 
 				System.out.println("  Sparse graph");
 				GRAPH_EDGES = 2000;
