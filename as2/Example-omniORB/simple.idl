@@ -1,0 +1,7 @@
+module example
+{
+    interface Simple
+    {
+    	void Display (in string sText);
+    };
+};
