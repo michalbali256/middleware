@@ -4,7 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "~/omniORB/include/"
+                "~/omniORB/include/",
+                "~/install/omniORB/include/"
             ],
             "defines": [],
             "compilerPath": "/usr/lib/llvm/7/bin/clang",

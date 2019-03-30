@@ -1,5 +1,5 @@
 ifndef OMNIORB_HOME
-	OMNIORB_HOME = ~/omniORB
+	OMNIORB_HOME = ~/install/omniORB
 endif
 
 ifeq ($(OMNIORB_HOME),)

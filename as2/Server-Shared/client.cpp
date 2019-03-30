@@ -43,9 +43,10 @@ int main(int argc, char **argv) {
 		
 		std::cout << "ready\n";
 		
-		master::octet_sequence_t oct;
+		master::octet_sequence_t_var oct;
 		
-		master::count_t cnt = key;
+		master::count_t cnt;
+		cnt.long_long_value(key);
 		inst->get_status(peer, cnt, oct);
 		
 		orb->destroy();
