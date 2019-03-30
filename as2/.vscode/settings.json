@@ -28,6 +28,15 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "string_view": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "thread": "cpp",
+        "array": "cpp",
+        "atomic": "cpp",
+        "chrono": "cpp",
+        "ctime": "cpp",
+        "memory": "cpp",
+        "ratio": "cpp",
+        "cinttypes": "cpp",
+        "tuple": "cpp"
     }
 }
