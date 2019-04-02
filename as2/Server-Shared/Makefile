@@ -1,5 +1,5 @@
 ifndef OMNIORB_HOME
-	OMNIORB_HOME = ~/install/omniORB
+	OMNIORB_HOME = ~/omniORB
 endif
 
 ifeq ($(OMNIORB_HOME),)
@@ -28,7 +28,7 @@ all: server client
 master.h masterSK.cpp: master.idl
 	$(IDL) $(IDLFLAGS) $<
 
-%.o: %.cpp master.h
+%.o: %.cpp master.h server_impl.h
 	$(CXX) $(CXXFLAGS) $(INCDIRFLAGS) -c -o $@ $<
 
 server: masterSK.o server.o
