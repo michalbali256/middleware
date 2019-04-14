@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
 				std::cout << "The value returned from instance was not of type long or short.\n";
 				inst->disconnect();
 				orb->destroy();
-				return;
+				return 1;
 		}
 		
 		//prepare the request
