@@ -1,0 +1,10 @@
+Ako zbuildit projekt:
+
+1. V Makefile prepisat OMNIORB_HOME na cestu k priecinku kde je nainstalovany v pocitaci
+2. spustit make
+
+Vytvori to 2 binarky: server a client
+
+server neprijima ziadne argumenty, staci ho spustit, na zaciatku cinnosti vypise IOR na standardny vystup.
+
+client prijima 3 argumenty: IOR, peer a key s rovnakym vyznamom ako v zadani: pri zadani zleho key server vrati exception so spravnym key. 

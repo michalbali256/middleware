@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 public class Main {
 	// How many nodes and how many edges to create.
 	private static final int GRAPH_NODES = 1000;
-	private static int GRAPH_EDGES = 2000;
+	private static final int GRAPH_EDGES = 2000;
 
 	// How many searches to perform
 	private static final int SEARCHES = 50;
@@ -104,9 +104,6 @@ public class Main {
 			if (distance != distanceTransitive) {
 				System.out.printf("Standard and transitive algorithms inconsistent (%d != %d)%n", distance,
 						distanceTransitive);
-			} else {
-				// Print the measurement result.
-				//System.out.printf("%7d %8d %13d %13d%n", i, distance, durationNs / 1000, durationTransitiveNs / 1000);
 			}
 		}
 		System.out.printf("%13d %13d\n", sum, sumT);
@@ -161,34 +158,20 @@ public class Main {
 		
 		try
 		{
-			searcherRemote = (Searcher) Naming.lookup("//u-pl30/Searcher");
-			provider = (NodeRemoteProvider) Naming.lookup ("//u-pl30/NodeRemoteProvider");
+			searcherRemote = (Searcher) Naming.lookup("//localhost/Searcher");
+			provider = (NodeRemoteProvider) Naming.lookup ("//localhost/NodeRemoteProvider");
 
-			
-			for(Tdist = 2; Tdist < 10; Tdist+=2)
-			{
-				System.out.printf("Transitive distance: %d\n", Tdist);
+			System.out.printf("Transitive distance: %d\n", Tdist);
 
-				/*System.out.println("  Dense graph");
-				GRAPH_EDGES = 3000;
-				runBench();*/
-
-				System.out.println("  Sparse graph");
-				GRAPH_EDGES = 2000;
-				runBench();
+			runBench();
 				
-			}
+			
 		}
 		catch (Exception e)
 		{ 
 			System.out.println ("Client Exception: " + e.getMessage ());
 			e.printStackTrace ();
 		}
-		
-		
-		
-		
-		
 	
 	}
 }

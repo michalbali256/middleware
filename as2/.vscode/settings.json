@@ -37,6 +37,12 @@
         "memory": "cpp",
         "ratio": "cpp",
         "cinttypes": "cpp",
-        "tuple": "cpp"
+        "tuple": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "fstream": "cpp",
+        "functional": "cpp",
+        "sstream": "cpp",
+        "mutex": "cpp"
     }
 }

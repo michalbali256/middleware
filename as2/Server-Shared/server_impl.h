@@ -1,9 +1,6 @@
-#include <iostream>
 #include <omniORB4/CORBA.h>
 #include "master.h"
 
-#include <vector>
-#include <memory>
 #include <cstring>
 
 class disconnect_provider
@@ -47,13 +44,11 @@ public:
 	
     virtual CORBA::Boolean ready() override
 	{
-        std::cout << "ready get\n";
 		return ready_;
 	}
 	
     virtual void ready(CORBA::Boolean _v) override
-	{
-		std::cout << "ready set\n";
+    {
         ready_ = _v;
 	}
 	
@@ -106,7 +101,6 @@ public:
         
         sent_c_ = cnt;
         sent_o_ = status[r];
-		std::cout << "get_status\n";
 	}
 	
     virtual CORBA::Boolean request(const master::request_t& req) override
@@ -143,7 +137,6 @@ public:
 	
     virtual void disconnect() override
 	{
-        std::cout << "disconnecting\n";
 		v_.disconnect(hash);
 	}
 };

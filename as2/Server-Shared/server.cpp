@@ -1,13 +1,14 @@
-#include <iostream>
 #include <exception>
 #include <memory>
 #include <omniORB4/CORBA.h>
 #include "master.h"
 #include "server_impl.h"
 
-#include <string>
+#include <iostream>
 #include <map>
+#include <mutex>
 using namespace std;
+
 
 
 class server_servant : public POA_master::server_i, public virtual disconnect_provider {
@@ -15,14 +16,15 @@ public:
 	
 	virtual void disconnect (size_t hash)
 	{
+		std::lock_guard<std::mutex> lock(inst_impls_mutex);
 		inst_impls.erase(hash);
-		std::cout << "disconnected\n";
 	}
 	
 	virtual CORBA::Short ping(CORBA::Short val)
 	{
 		return val;
 	}
+	
     virtual master::instance_i_ptr connect(char*& peer, CORBA::LongLong& key)
 	{
 		size_t hash = std::hash<std::string>()(peer);
@@ -34,6 +36,7 @@ public:
 			master::server_i::connection_e(exception_text.c_str())._raise();
 		}
 		
+		//the random key that will be later enforced by the instance
 		key = random() % 100000000;
 		
 		auto inst = new instance_impl(*this);
@@ -41,14 +44,17 @@ public:
 		inst->hash = hash;
 		inst->key = key;
 		
+		//create random 8-character string
 		inst->peer = CORBA::string_dup("someeigh");
-		
 		for(size_t i = 0; i < 8; ++i)
 			inst->peer[i] = (char)( random() % 26 + 65);
 		
+		//return the string
 		peer = CORBA::string_dup(inst->peer);
 		
-		inst_impls[hash] = inst->_this();
+		//add the newly created instance to a map
+		std::lock_guard<std::mutex> lock(inst_impls_mutex);
+		inst_impls[hash] = master::instance_i::_duplicate(inst->_this());
 		
 		return inst_impls[hash];
 	}
@@ -56,6 +62,8 @@ private:
 	std::string exception_text;
 	
 	std::map<size_t, master::instance_i_var> inst_impls;
+	
+	std::mutex inst_impls_mutex;
 };
 
 int main(int argc, char **argv) {

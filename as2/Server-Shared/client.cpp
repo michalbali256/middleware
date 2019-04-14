@@ -11,15 +11,15 @@ using namespace std::chrono_literals;
 
 int main(int argc, char **argv) {
 	try {
-		if (argc < 3) {
-			cout << "Usage: client IOR key" << endl;
+		if (argc < 4) {
+			cout << "Usage: client IOR peer key" << endl;
 			return 0;
 		}
 		
 		
-		CORBA::String_var peer = CORBA::string_dup("balim");
+		CORBA::String_var peer = CORBA::string_dup(argv[2]);
 		CORBA::LongLong key;
-		key = atoi(argv[2]);
+		key = atoi(argv[3]);
 		
 
 		//corba initialization
@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 		master::server_i_var server = master::server_i::_narrow(server_base);
 		
 		//1. connect with the key and user name
-		master::instance_i_ptr inst = server->connect(peer, key);
+		master::instance_i_var inst = server->connect(peer, key);
 		
 		std::cout << peer << "\n";
 		std::cout << key << "\n";
