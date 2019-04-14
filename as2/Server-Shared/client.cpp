@@ -48,12 +48,6 @@ int main(int argc, char **argv) {
 		
 		master::count_t cnt;
 		
-		if(cnt._d() != master::vlong_long)
-		{
-			std::cout << "The value returned from instance was not of type long long.\n";
-			inst->disconnect();
-			orb->destroy();
-		}
 		
 		cnt.long_long_value(key);
 		inst->get_status(peer, cnt, oct);
@@ -68,6 +62,11 @@ int main(int argc, char **argv) {
 			case master::switch_t::vlong :
 				index = cnt.long_value();
 				break;
+			default:
+				std::cout << "The value returned from instance was not of type long or short.\n";
+				inst->disconnect();
+				orb->destroy();
+				return;
 		}
 		
 		//prepare the request
