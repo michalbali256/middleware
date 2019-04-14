@@ -47,6 +47,14 @@ int main(int argc, char **argv) {
 		master::octet_sequence_t_var oct;
 		
 		master::count_t cnt;
+		
+		if(cnt._d() != master::vlong_long)
+		{
+			std::cout << "The value returned from instance was not of type long long.\n";
+			inst->disconnect();
+			orb->destroy();
+		}
+		
 		cnt.long_long_value(key);
 		inst->get_status(peer, cnt, oct);
 		
@@ -66,7 +74,8 @@ int main(int argc, char **argv) {
 		master::request_t req;
 		
 		req.index = cnt;
-		req.data.replace(CORBA::TypeCode::PR_octet_tc(), & oct[index]);
+		req.data <<= CORBA::Any::from_octet(oct[index]);
+		//req.data.replace(CORBA::TypeCode::PR_octet_tc(), & oct[index]);
 		
 		//call the request
 		auto ret = inst->request(req);
@@ -74,17 +83,16 @@ int main(int argc, char **argv) {
 		std::cout << "Request returned: " << ret << "\n";
 		
 		inst->disconnect();
-		
 		orb->destroy();
 
 	} catch (const CORBA::SystemException &ex) {
 		cerr << ex._name() << endl;
 		return 1;
-	} catch (master::server_i::connection_e e) {
+	} catch (master::server_i::connection_e & e) {
 		cerr << e.cause << endl;
 
 	}
-	catch(master::instance_i::protocol_e e)
+	catch(master::instance_i::protocol_e & e)
 	{
 		cerr << e.cause << endl;
 	}
