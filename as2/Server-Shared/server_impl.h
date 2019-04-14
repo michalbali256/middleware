@@ -110,6 +110,8 @@ public:
         }
         if(shrt)
         {
+            if(req.index._d() != master::vshort)
+                master::instance_i::protocol_e("Request index type does not match")._raise();
             
             if(req.index.short_value() != sent_c_.short_value())
             {
@@ -118,6 +120,9 @@ public:
         }
         else
         {
+            if(req.index._d() != master::vlong)
+                master::instance_i::protocol_e("Request index type does not match")._raise();
+            
             if(req.index.long_value() != sent_c_.long_value())
             {
                 master::instance_i::protocol_e("Indices do not match")._raise();
