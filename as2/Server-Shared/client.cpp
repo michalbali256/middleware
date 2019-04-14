@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
 		inst->disconnect();
 		orb->destroy();
 
-	} catch (const CORBA::SystemException &ex) {
+	} catch (const CORBA::SystemException & ex) {
 		cerr << ex._name() << endl;
 		return 1;
 	} catch (master::server_i::connection_e & e) {

@@ -15,7 +15,6 @@ class instance_impl : public POA_master::instance_i
     bool ready_ = false;
     bool idle_ = false;
     
-    CORBA::String_var exception_message_;
     master::count_t sent_c_;
     CORBA::Octet sent_o_;
     bool shrt = false;
@@ -56,29 +55,26 @@ public:
 	{
         if(!ready_)
         {
-            exception_message_ = CORBA::string_dup("Ready not set.");
-            master::instance_i::protocol_e(exception_message_)._raise();
+            master::instance_i::protocol_e("Ready not set.")._raise();
         }
         if(!idle_)
         {
-            exception_message_ = CORBA::string_dup("Instance not idle yet.");
-            master::instance_i::protocol_e(exception_message_)._raise();
+            master::instance_i::protocol_e("Instance not idle yet.")._raise();
         }
+        
         if(cnt._d() != master::vlong_long)
         {
-            exception_message_ = CORBA::string_dup("count is not long long");
-            master::instance_i::protocol_e(exception_message_)._raise();
+            master::instance_i::protocol_e("Count is not long long")._raise();
         }
         if(strcmp(s_key, peer.inout()) != 0 )
         {
-            std::string s = "s_key does is not the same that was returned. s_key" + std::string(s_key) + " " + std::string(peer.inout());
-            exception_message_ = CORBA::string_dup(s.c_str());
+            exception_message_ = CORBA::string_dup(s_key does is not the same that was returned.);
             master::instance_i::protocol_e(exception_message_)._raise();
         }
         if(cnt.long_long_value() != key)
         {
-            exception_message_ = CORBA::string_dup("cnt does is not the same as the key that was returned");
-            master::instance_i::protocol_e(exception_message_)._raise();
+            exception_message_ = CORBA::string_dup();
+            master::instance_i::protocol_e("cnt does is not the same as the key that was returned")._raise();
         }
         
         
@@ -112,23 +108,21 @@ public:
         
         if(o != sent_o_)
         {
-            exception_message_ = CORBA::string_dup("octets do not match");
-            master::instance_i::protocol_e(exception_message_)._raise();
+            master::instance_i::protocol_e("Octets do not match")._raise();
         }
         if(shrt)
         {
+            
             if(req.index.short_value() != sent_c_.short_value())
             {
-                exception_message_ = CORBA::string_dup("indices do not match");
-                master::instance_i::protocol_e(exception_message_)._raise();
+                master::instance_i::protocol_e("Indices do not match")._raise();
             }
         }
         else
         {
             if(req.index.long_value() != sent_c_.long_value())
             {
-                exception_message_ = CORBA::string_dup("indices do not match");
-                master::instance_i::protocol_e(exception_message_)._raise();
+                master::instance_i::protocol_e("Indices do not match")._raise();
             }
         }
         
