@@ -50,6 +50,7 @@ public:
 			inst->peer[i] = (char)( random() % 26 + 65);
 		
 		//return the string
+		CORBA::string_free(peer);
 		peer = CORBA::string_dup(inst->peer);
 		
 		//add the newly created instance to a map
