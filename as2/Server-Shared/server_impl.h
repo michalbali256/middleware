@@ -68,12 +68,10 @@ public:
         }
         if(strcmp(s_key, peer.inout()) != 0 )
         {
-            exception_message_ = CORBA::string_dup(s_key does is not the same that was returned.);
-            master::instance_i::protocol_e(exception_message_)._raise();
+            master::instance_i::protocol_e("s_key does is not the same that was returned.")._raise();
         }
         if(cnt.long_long_value() != key)
         {
-            exception_message_ = CORBA::string_dup();
             master::instance_i::protocol_e("cnt does is not the same as the key that was returned")._raise();
         }
         
