@@ -1,7 +1,6 @@
 *.class
 *.o
 **/ipch/
-**/client
 **/server
 as2/Server-Shared/master.h
 as3/.idea/
