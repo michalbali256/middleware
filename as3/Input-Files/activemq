@@ -1,4 +1,4 @@
 
 ACTIVEMQ_HOME="$HOME/ActiveMQ"
 
-exec "$ACTIVEMQ_HOME\bin\activemq" "$@"
+exec "$ACTIVEMQ_HOME/bin/activemq" "$@"
