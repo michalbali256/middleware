@@ -1,0 +1,21 @@
+
+
+Rozsiril som protokol o kontrolu, ci predavajuci ma dost penazi, a ci predavajuci poslal dost penazi. Banka si udrziava zostatok na ucte.
+
+V protokole je len jedna nova sprava: po tom, co predavajuci dostane report od banky o tom, ze kupujuci mu poslal peniaze, musi potvrdit banke, ze poslal dost penazi.
+Ak posle zaporne potvrdenie, transakcia vobec nenastane.
+
+Niektore spravy, ktore boli uz v povodnom protokole sa rozsirili o indikaciu, ci boli predosle akcie uspesne:
+  1. Sprava od banky predavajucemu obsahuje hodnotu, ktora indikuje, ci bolo na ucte dost penazi na transakciu.
+  2. Finalna sprava od predavajuceho kupujucemu obsahuje informaciu o tom, ci mal kupujuci dost penazi na ucte, a ci zaplatil dost penazi za tovar.
+
+Uzivatelsky interface sa rozsiril o 2 moznosti: Je mozne opytat sa banky aky ma klient zostatok na ucte, a je mozne kupit tovar za ciastku, ktoru zada uzivatel na vstupe.
+
+Vylepsil som taktiez zapojenie noveho klienta: Pri pripojeni odosle do topicu Offers specialnu spravu so semantikou "som tu novy, poslite mi vase ponuky", aby dostal ponuky od vsetkych klientov.
+
+
+BUILD INFO:
+
+Prilozeny je bashovy skript make, ktory zbuildi klienta a banku.
+
+Potom sa na spustenie activemq, banky a klientov su v priecinku rovnomenne bashove skripty. Vo vsetkych je treba nastavit cestu k ActiveMQ

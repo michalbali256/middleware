@@ -4,3 +4,6 @@
 **/client
 **/server
 as2/Server-Shared/master.h
+as3/.idea/
+as3/as3.eml
+as3/out/

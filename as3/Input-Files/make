@@ -1,0 +1,6 @@
+#!/bin/sh
+
+ACTIVEMQ_HOME="$HOME/ActiveMQ"
+JAVACCMD="javac"
+
+"$JAVACCMD" -classpath "$ACTIVEMQ_HOME/lib/*" *.java

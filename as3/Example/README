@@ -1,0 +1,6 @@
+1. Unpack ActiveMQ-5.0.0.tar.gz to $HOME/ActiveMQ/
+2. Run ./make
+3. Run ./activemq start
+4. Run ./consumer
+5. Run ./producer
+6. Run ./activemq stop

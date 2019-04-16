@@ -1,0 +1,6 @@
+#!/bin/bash
+
+ACTIVEMQ_HOME="$HOME/ActiveMQ"
+JAVACMD="java"
+
+exec "$JAVACMD" -classpath ".:$ACTIVEMQ_HOME/lib/*" Bank
