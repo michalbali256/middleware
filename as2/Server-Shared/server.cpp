@@ -11,11 +11,17 @@ using namespace std;
 
 
 
-class server_servant : public POA_master::server_i, public virtual disconnect_provider {
+class server_servant : public POA_master::server_i, public virtual disconnect_provider
+{
 public:
+	
+	server_servant(PortableServer::POA_var & rootpoa) : root_poa(rootpoa) {}
 	
 	virtual void disconnect (size_t hash)
 	{
+		
+		PortableServer::ObjectId_var id = root_poa->reference_to_id(inst_impls[hash].inout());
+   		root_poa->deactivate_object(id);
 		std::lock_guard<std::mutex> lock(inst_impls_mutex);
 		inst_impls.erase(hash);
 	}
@@ -60,6 +66,9 @@ public:
 		return inst_impls[hash];
 	}
 private:
+
+	PortableServer::POA_var & root_poa;
+
 	std::string exception_text;
 	
 	std::map<size_t, master::instance_i_var> inst_impls;
@@ -79,7 +88,7 @@ int main(int argc, char **argv) {
 		PortableServer::POA_var rootPOA = PortableServer::POA::_narrow(rootPOABase);
 		PortableServer::POAManager_var rootPOAManager = rootPOA->the_POAManager();
 
-		PortableServer::Servant_var<server_servant> server_serv = new server_servant;
+		PortableServer::Servant_var<server_servant> server_serv = new server_servant(rootPOA);
 		master::server_i_var server = server_serv->_this();
 
 		CORBA::String_var ior = orb->object_to_string(server);

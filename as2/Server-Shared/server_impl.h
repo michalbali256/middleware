@@ -100,8 +100,8 @@ public:
     virtual CORBA::Boolean request(const master::request_t& req) override
 	{
         CORBA::Octet o;
-        if(!(req.data >>= CORBA::Any::to_octet(o))
-            master::instance_i::protocol_e("Octet extraction from o was not successful.")
+        if(!(req.data >>= CORBA::Any::to_octet(o)))
+            master::instance_i::protocol_e("Octet extraction from o was not successful.");
         
         if(o != sent_o_)
         {
