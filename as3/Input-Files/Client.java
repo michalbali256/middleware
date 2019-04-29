@@ -69,6 +69,7 @@ public class Client {
 	// sender for the eventSession
 	private MessageProducer eventSender;
 
+
 	// receiver of synchronous replies
 	private MessageConsumer replyReceiver;
 	
@@ -259,14 +260,12 @@ public class Client {
         // restart message processing
         conn.start();
 
-        TextMessage hello = eventSession.createTextMessage("new client");
+        TextMessage hello = clientSession.createTextMessage("new client");
         hello.setStringProperty(SENDER_KEY, clientName);
-        eventSender.send(offerTopic, hello);
+        clientSender.send(offerTopic, hello);
 
         // send list of offered goods
         publishGoodsList(clientSender);
-
-
     }
 
 	/*
@@ -276,12 +275,12 @@ public class Client {
 	 */
 	private void publishGoodsList(MessageProducer sender) throws JMSException {
 		// TODO
+		synchronized (offeredGoods) {
+			ObjectMessage m = clientSession.createObjectMessage(new ArrayList<Goods>(offeredGoods.values()));
+			m.setStringProperty(SENDER_KEY, clientName);
 
-		ObjectMessage m = clientSession.createObjectMessage(new ArrayList<Goods>(offeredGoods.values()));
-		m.setStringProperty(SENDER_KEY, clientName);
-
-		clientSender.send(offerTopic, m);
-
+			clientSender.send(offerTopic, m);
+		}
 			// create a message (of appropriate type) holding the list of offered goods
 			// which can be created like this: new ArrayList<Goods>(offeredGoods.values())
 
@@ -310,13 +309,15 @@ public class Client {
 	 * Print known goods that are offered by other clients
 	 */
 	private void list() {
-		System.out.println("Available goods (name: price):");
-		// iterate over sellers
-		for (String sellerName : availableGoods.keySet()) {
-			System.out.println("From " + sellerName);
-			// iterate over goods offered by a seller
-			for (Goods g : availableGoods.get(sellerName)) {
-				System.out.println("  " + g);
+		synchronized (availableGoods) {
+			System.out.println("Available goods (name: price):");
+			// iterate over sellers
+			for (String sellerName : availableGoods.keySet()) {
+				System.out.println("From " + sellerName);
+				// iterate over goods offered by a seller
+				for (Goods g : availableGoods.get(sellerName)) {
+					System.out.println("  " + g);
+				}
 			}
 		}
 	}
@@ -402,12 +403,17 @@ public class Client {
 			System.out.println("Enter amount to pay:");
 			amount = Integer.parseInt(in.readLine());
 		}
+
+
 		// check if the seller exists
-		List<Goods> sellerGoods = availableGoods.get(sellerName);
-		if (sellerGoods == null) {
-			System.out.println("Seller does not exist: " + sellerName);
-			return;
+		synchronized (availableGoods) {
+			List<Goods> sellerGoods = availableGoods.get(sellerName);
+			if (sellerGoods == null) {
+				System.out.println("Seller does not exist: " + sellerName);
+				return;
+			}
 		}
+
 		
 		// TODO
 		
@@ -520,11 +526,12 @@ public class Client {
 			return;
 
 		List<Goods> gods = (List<Goods>) msg.getObject();
-
-		if (gods.isEmpty()) {
-			availableGoods.remove(sender);
-		} else {
-			availableGoods.put(sender, gods);
+		synchronized (availableGoods) {
+			if (gods.isEmpty()) {
+				availableGoods.remove(sender);
+			} else {
+				availableGoods.put(sender, gods);
+			}
 		}
 
 		// parse the message, obtaining sender's name and list of offered goods
@@ -584,23 +591,23 @@ public class Client {
 
 		MapMessage reply = clientSession.createMapMessage();
 		reply.setInt(CLIENT_MSG_TYPE_KEY, CLIENT_MSG_TYPE_BUY_REPLY);
-		Goods goods = offeredGoods.get(goodsName);
-		if (goods == null)
-		{
-			reply.setBoolean(CLIENT_SALE_ACCEPTED_KEY,false);
-		}
-		else
-		{
-			offeredGoods.remove(goodsName);
-			reservedGoods.put(buyerName, goods);
-			reserverAccounts.put(buyerAccountNumber, buyerName);
-			reserverDestinations.put(buyerName, toBuyer);
 
-			reply.setBoolean(CLIENT_SALE_ACCEPTED_KEY,true);
-			reply.setInt(SELLER_ACCOUNT_NUMBER_KEY, accountNumber);
-			reply.setInt(PRICE_KEY, goods.price);
-		}
+		synchronized (offeredGoods) {
+			Goods goods = offeredGoods.get(goodsName);
 
+			if (goods == null) {
+				reply.setBoolean(CLIENT_SALE_ACCEPTED_KEY, false);
+			} else {
+				offeredGoods.remove(goodsName);
+				reservedGoods.put(buyerName, goods);
+				reserverAccounts.put(buyerAccountNumber, buyerName);
+				reserverDestinations.put(buyerName, toBuyer);
+
+				reply.setBoolean(CLIENT_SALE_ACCEPTED_KEY, true);
+				reply.setInt(SELLER_ACCOUNT_NUMBER_KEY, accountNumber);
+				reply.setInt(PRICE_KEY, goods.price);
+			}
+		}
 		eventSender.send(toBuyer, reply);
 		// check if we still offer this goods
 //		Goods goods = offeredGoods.get(goodsName);
@@ -640,7 +647,7 @@ public class Client {
 				String buyerName = reserverAccounts.get(buyerAccount);
 
 				//send a message to buyer in any case
-				MapMessage conf = clientSession.createMapMessage();
+				MapMessage conf = eventSession.createMapMessage();
 				conf.setInt(Bank.REPORT_TYPE_KEY, cmd);
 
 				if (cmd == Bank.REPORT_TYPE_RECEIVED) {
@@ -650,7 +657,7 @@ public class Client {
 					Goods g = reservedGoods.get(buyerName);
 
 					//message to bank is necessary only if bank is ready to move the money
-					MapMessage bankAck = clientSession.createMapMessage();
+					MapMessage bankAck = eventSession.createMapMessage();
 
 					System.out.println("Received $" + amount + " from " + buyerName);
 					// did he pay enough?
@@ -674,12 +681,14 @@ public class Client {
 
 				Destination buyerDest = reserverDestinations.get(buyerName);
 
-				// remove the reserved goods and buyer-related information
+				// remove the reserved goods and buyer-related information and move goods from reserved to offered
 				reserverDestinations.remove(buyerName);
 				reserverAccounts.remove(buyerAccount);
+				Goods declinedGoods = reservedGoods.get(buyerName);
 				reservedGoods.remove(buyerName);
-
-
+				synchronized(offeredGoods) {
+					offeredGoods.put(declinedGoods.name, declinedGoods);
+				}
 				eventSender.send(buyerDest, conf);
 
 				publishGoodsList(eventSender);
