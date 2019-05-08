@@ -72,7 +72,6 @@ class Chat(object):
         self.name_ = name
 
         name_hash = hash_string(name)
-        print('name IDID' + str(name_hash))
         
         print('registering our name')
         node = self.local_.find_successor(name_hash)
